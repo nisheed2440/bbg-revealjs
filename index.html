@@ -1,0 +1,1090 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>BACKBONE - A GUIDE</title>
+
+		<meta name="description" content="A framework for easily creating beautiful presentations using HTML">
+		<meta name="author" content="Hakim El Hattab">
+
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<link rel="stylesheet" href="css/reveal.min.css">
+		<link rel="stylesheet" href="css/theme/default.css" id="theme">
+
+		<!-- For syntax highlighting -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<!-- If the query includes 'print-pdf', include the PDF print sheet -->
+		<script>
+			if( window.location.search.match( /print-pdf/gi ) ) {
+				var link = document.createElement( 'link' );
+				link.rel = 'stylesheet';
+				link.type = 'text/css';
+				link.href = 'css/print/pdf.css';
+				document.getElementsByTagName( 'head' )[0].appendChild( link );
+			}
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+	</head>
+
+	<body>
+
+		<div class="reveal">
+			<div class="slides">
+				<!-- Introduction -->
+				<section id="introduction">
+					<h1>Backbone - A Guide</h1>
+					<p><small>By: Nisheed Jagadish</small></p>
+				</section>
+				<!-- Basics -->
+				<section id="basics">
+					<!-- WHAT IS MVC -->
+					<section>
+						<h1>BACK TO BASICS</h1>
+					</section>
+					<section>
+						<h2>What is MVC?</h2>
+						<p><small>MVC is an architectural design pattern that encourages improved application organization through a separation of concerns. It enforces the isolation of business data (Models) from user interfaces (Views), with a third component (Controllers) traditionally managing logic, user-input, and coordination of Models and Views.</small></p>
+					</section>
+					<!-- WHEN TO USE BACKBONE -->
+					<section>
+						<h2>When to use BackboneJS ?</h2>
+						<p><small>
+							All the time!! No, Seriously.
+						</small></p>
+						<ul>
+							<li class="fragment roll-in">
+								
+								Single page apllications are increasingly becoming a mainstay and organizing data and logic using JQuery or MooTools becomes extremely difficult.
+								
+							</li>
+							<li class="fragment roll-in">
+								
+								When a project needs to separate the application logic from the presentation layer so that the server is lightweight and pages can be served faster via API calls aka "Abstraction"
+								
+							</li>
+							<li class="fragment roll-in">
+								
+								Lightweight applications where programmers have more freedom to write custom components and can readily use libraries like Zepto or Jquery without much conflict or learning a whole new syntax to achieve the same result.
+								
+							</li>
+						</ul>
+					</section>
+					<!-- ADVANTAGE OF BACKBONE OVER ANGULAR -->
+					<section>
+						<h2>Advantages of backbonejs</h2>
+						<ul>
+							<li>
+								Lightweight even with dependencies like underscore.js
+							</li>
+							<li>
+								Learning curve is pretty linear with easy to grasp concepts like Models,View and Collections
+							</li>
+							<li>
+								Can be used with multiple templating engines line underscore templates or Handlebars
+							</li>
+							<li>
+								Better input validation support as compared to Angular by integrating with popular plugins
+							</li>
+							<li>
+								Being so small and basic, Backbone can be a good foundation to build your own framework upon.
+								eg. Marionette or Thorax
+							</li>
+						</ul>
+					</section>
+				</section>
+				<!-- MVC IN BACKBONE -->
+				<section>
+					<h2>MVC in Backbone</h2>
+					<p class="text-left">
+						Backbone is more of an MV* framework where MV* is actually Models Views Collection and Routers. Its different from frameworks like Angular as the binding of the data with the view is done within the View itself. 
+					</p>
+					<p class="text-left">
+						Here Collections are a set of Models which represents a grouping of similar data.
+					</p>
+					<p class="text-left">
+						Routers help set chages in context of the pages via URL hash changes or window.history.pushstate changes.
+					</p>
+				</section>
+				<!-- MODELS -->
+				<section>
+					<section>
+						<h1>INTRODUCTION TO MODELS</h1>
+					</section>
+					<section data-markdown>
+						<script type="text/template">
+						  ## VANILLA JS MODEL
+						  ```
+						  	//A simple person object
+							var Person = function(config){
+								this.name = config.name;
+								this.job = config.job;
+								return this;
+							}
+
+							//Assuming every person works
+							Person.prototype.work = function(){
+								return this.name + ' is currently working as a ' + this.job; 
+							}
+						  ```
+						</script>						
+					</section>
+					<section data-markdown>
+						<script type="text/template">
+						##First backbone model
+						```
+						//A simple person model
+						var Person = Backbone.Model.extend({
+							defaults:{
+								name:'',
+								job:''
+							},
+							/*Constructor function */
+							initialize:function(){
+								console.log('Model has been initialized');
+								this.work();
+							},
+							work:function(){
+								console.log(this.get('name') + ' is currently working as a ' + this.get('job'));
+							}
+						});
+						```
+						</script>
+					</section>
+					<section data-markdown>
+						<script type="text/template">
+						##get and set functions
+						```
+						var Person = Backbone.Model.extend({});
+						var person = new Person();
+						person.set('name','Nisheed');
+						console.log(person.get('name'));
+						person.set({
+							name:'Jagadish',
+							job:'Web Developer'
+						});
+						console.log(person.toJSON());
+						```
+						</script>
+					</section>
+					<section data-markdown>
+						<script type="text/template">
+						##model validation
+						The Problem
+						```
+						var Person = Backbone.Model.extend({
+							defaults:{
+								name : '',
+								age:0
+							}
+						});
+
+						var person = new Person();
+						person.set({
+							age:-1
+						});
+						console.log(person.toJSON());
+
+
+						```
+						We know that every person should have a name and a postive age. <!-- .element: class="fragment text-small" -->
+						</script>
+						
+					</section>
+					<section data-markdown>
+						<script type="text/tempate">
+						##Model validation
+						The Solution
+						"model.validate" function <!-- .element: class="text-small"-->
+						```
+						var Person = Backbone.Model.extend({
+							defaults:{
+								name:'',
+								age:0
+							},
+							validate:function(attr){
+								if(!$.trim(attr.name)){
+									return 'Please specify a name!!!';
+								}
+								if(attr.age <= 0){
+									return 'Please specify a non negative number';
+								}
+							},
+							initialize:function(){
+								//Model is initialized
+							}
+						});
+						```
+						</script>
+					</section>
+					<section data-markdown  data-notes="^Note:">
+						<script type="text/template">
+						##How to validate on set
+
+						__NOTES__ model.set method does not involke the validate method by default. In order to validate the model on set, pass the "validate" attribute "true" in the options
+					
+						```
+						person.set({name:'Nisheed',age:-5},{validate:true});
+						```
+						</script>
+					</section>
+					<section data-markdown>
+						<script type="text/template">
+						## Listening to model errors
+						```
+						var Person = Backbone.Model.extend({
+							defaults:{
+								name:'',
+								age:0
+							},
+							validate:function(attr){
+								if(!$.trim(attr.name)){
+									return 'Please specify a name!!!';
+								}
+								if(attr.age <= 0){
+									return 'Please specify a non negative number';
+								}
+							},
+							initialize:function(){
+								//Model is initialized
+								this.on('invalid',function(model,error){
+									console.log(error);
+								});
+							}
+						});			
+						```
+						</script>
+					</section>
+				</section>
+				<!-- VIEWS -->
+				<section>
+					<section>
+						<h1>Introduction to views</h1>
+					</section>
+					<section data-markdown>
+						<script type="text/template">
+						## First Backbone View
+						```
+							var PersonView = Backbone.View.extend({
+								tagName:'li',
+								/*Constructor for the View*/
+								initialize:function(){
+									console.log('View has been initialized');
+								},
+								render:function(){
+									this.$el.html('A Person');
+									return this;
+								}
+							});
+						```
+						</script>
+					</section>
+					<section data-markdown>
+						<script type="text/template">
+						## initialize and render methods
+						```
+						/*Constructor for the View*/
+						initialize:function(){
+							console.log('View has been initialized');
+							this.collection = new SampleCollection();
+							this.render();
+						}
+						...
+						```
+						```
+						render:function(){
+							//what the hell is $el!!
+							var html = this.template(someJSONData);
+							this.$el.html(html);
+							return this;
+						}
+						...
+						```
+						</script>
+					</section>
+					<section data-markdown>
+						<script type="text/template">
+						##Binding Model data with Views
+						```
+						/*Model Person*/
+						var Person = Backbone.Model.extend({});
+						/*View Person*/
+						var PersonView = Backbone.View.extend({
+							tagName:'li',
+							render:function(){
+								var innerHtml = this.model.get('name') + ' is currently working as ' + this.model.get('job');
+								this.$el.html(innerHtml);
+								return this;
+							}
+						});
+
+						var person = new Person({name:'Nisheed',job:'Web Developer'});
+						var personView = new PersonView({model:person});
+						console.log(personView.render().el);
+						```
+						</script>
+					</section>
+					<section data-markdown>
+						<script type="text/template">
+						##Anti-pattern templates
+						```
+						...
+						render:function(){
+								/*inline non re usable template */
+								var innerHtml = this.model.get('name') + ' is currently working as ' + this.model.get('job');
+								this.$el.html(innerHtml);
+								return this;
+							}
+						...
+						```
+						</script>
+					</section>
+					<section data-markdown>
+						<script type="text/template">
+						##Inline templates
+						```
+						/*Model Person*/
+						var Person = Backbone.Model.extend({});
+						/*View Person*/
+						var PersonView = Backbone.View.extend({
+							tagName:'li',
+							template: _.template('<%= name %> is currently working as a <%= job %>'),
+							render:function(){
+								var innerHtml = this.template(this.model.toJSON());
+								this.$el.html(innerHtml);
+								return this;
+							}
+						});
+
+						var person = new Person({name:'Nisheed',job:'Web Developer'});
+						var personView = new PersonView({model:person});
+						console.log(personView.render().el);
+						```
+						</script>
+					</section>
+					<section data-markdown>
+						<script type="text/template">
+						##External templates
+						
+						Create a script tag in the html of type "text/template" and id "ext-template" and paste the following markup
+						```
+						<%= name %> is currently working as a <%= job %>
+							
+						```
+						then the only change would be as follows
+						```
+						/*Model Person*/
+						var Person = Backbone.Model.extend({});
+						/*View Person*/
+						var PersonView = Backbone.View.extend({
+							tagName:'li',
+							template: _.template($('#ext-template').html()), //<<<<<<<<<<<<
+							render:function(){
+								var innerHtml = this.template(this.model.toJSON());
+								this.$el.html(innerHtml);
+								return this;
+							}
+						});
+
+						var person = new Person({name:'Nisheed',job:'Web Developer'});
+						var personView = new PersonView({model:person});
+						console.log(personView.render().el);
+						```
+						</script>
+					</section>
+				</section>
+				<section>
+					<section data-markdown>
+						<script type="text/template">
+						#Introduction to collections
+						</script>
+					</section>
+					<section data-markdown>
+						<script type="text/template">
+							##The need for collections
+							Consider the following senario
+							```
+							var Person = Backbone.Model.extend({});
+							var PersonListItem = Backbone.View.extend({
+								tagName:'li',
+								render:function(){
+									this.$el.append('Name:' + this.model.get('name') + '<br> Age:' + this.model.get('age'));
+									return this;
+								}
+							});
+							/* In order to create many people we would have to instantiate
+							the Person Model in the following way
+							*/
+							var personOne = new Person({name:'John',age:23});
+							var personTwo = new Person({name:'Doe',age:60});
+							.... 
+							var personN = new Person({name:'PersonN',age:20});
+							/* And in order to create views you would have to something like..*/
+							var personViewOne = new PersonView({model:personOne});
+							var personViewTwo = new PersonView({model:personTwo});
+							...
+							var personViewN = new PersonView({model:personN});
+
+							```
+							This is obviously not the way to go forward. <!-- .element: class="fragment" -->
+						</script>
+					</section>
+					<section data-markdown>
+						<script type="text/template">
+							##First Backbone Collection
+							```
+							var Person = Backbone.Model.extend({
+								idAttribute:'age'
+							});
+							var People = Backbone.Collection.extend({
+								model:Person,
+								initialize:function(){
+									this.on('add',function(model){
+										console.log('Added model data to collection');
+									});
+									this.on('remove',function(model){
+										console.log('Deleted model from collection');
+									});
+								}
+							});
+							var people = new People();
+							people.add([{name:'John',age:23},{name:'Doe',age:60}]);
+							console.log(people.toJSON());
+							people.remove(people.get(23));
+							console.log(people.toJSON());
+							```
+						</script>
+					</section>
+				</section>
+				<section data-markdown>
+					<script type="text/template">
+					##Collection Views
+					```
+					var Person = Backbone.Model.extend({});
+					var People = Backbone.Collection.extend({
+						model:Person,
+						initialize:function(){
+							this.on('add',function(model){
+								console.log('Added model data to collection');
+							});
+							this.on('remove',function(model){
+								console.log('Deleted model from collection');
+							});
+						}
+					});
+
+					var PersonView = Backbone.View.extend({
+						tagName:'li',
+						render:function(){
+							this.$el.html('Name:' + this.model.get('name') + '<br> Age:' + this.model.get('age'));
+							return this;
+						}
+					});
+					/*Collection View*/
+					var PeopleView = Backbone.View.extend({
+						tagName:'ul',
+						render:function(){
+							this.collection.each(function(person){
+								this.addOnePerson(person);
+							},this);
+							return this;
+						},
+						addOnePerson:function(person){
+							var personView = new PersonView({model:person});
+							this.$el.append(personView.render().el);
+							return;
+						}
+					});
+					//Static data
+					var peopleData = [{name:'John',age:23},{name:'Doe',age:60}];
+
+					var people = new People();
+					people.add(peopleData);
+
+					var peopleView = new PeopleView({collection:people});
+					$(document.body).append(peopleView.render().el);
+					```
+					</script>
+				</section>
+				<section data-markdown>
+					<script type="text/template">
+						##Template Helpers
+						###The NEED
+						```
+						...
+							template:_.template($('#ext-template').html()),
+						...
+
+						```
+						###Instead <!-- .element: class="fragment" -->
+
+						```
+						/*In the app.js global*/
+						(function(){
+							window.templateHelper = function(tplId){
+								var $tpl = $('#' + tplId);
+								if($tpl.length){
+									return _.template($tpl.html());
+								} else {
+									return _.template('');
+								}
+							}
+						})();
+
+						/*in the view we can then use*/
+						...
+						template: templateHelper('ext-template'),
+						...
+						
+						```
+						<!-- .element: class="fragment" -->
+					</script>
+				</section>
+				<section>
+					<section data-markdown>
+						<script type="text/template">
+							#Namespacing
+						</script>
+					</section>
+					<section data-markdown>
+						<script type="text/template">
+						##NEED FOR NAMESPACING
+
+						Till now we have been polluting the global scope by using
+						```
+						var Person = Backbone.Model.extend({});
+						var People = Backbone.Collection.extend({
+							model:Person,
+						});
+						var PeopleView = Backbone.View.extend({
+							tagName:'li'
+							render:function(){}
+						});
+						/* ALL THE ABOVE STATEMENTS WILL CREATE OBJECTS ON THE GLOBAL SCOPE*/
+						```
+
+						</script>
+					</section>
+					<section data-markdown>
+						<script type="text/template">
+						## Simple Namespacing
+						Create a global app namespace and then create Model,Views and Collections under it
+						```
+							/* In the app.js global*/
+							(function(){
+								window.bbg = {}; // bbg stands for backbone guide
+
+								//We can then create objects under bbg as follows
+								bbg.Person = Backbone.Model.extend({});
+								bbg.People = Backbone.Collection.extend({
+									model:bbg.Person,
+								});
+								bbg.PeopleView = Backbone.View.extend({
+									tagName:'li'
+									render:function(){}
+								});
+							})();
+						```
+						<!-- .element: class="fragment" -->
+						</script>
+					</section>
+					<section data-markdown>
+						<script type="text/template">
+						## Sub Namespacing
+						Solution to simple namespacing complications - make it a tad bit modular
+						```
+						/* In the app.js global*/
+						(function(){
+							window.bbg = {}; // bbg stands for backbone guide
+
+							bbg.Models = {};
+							bbg.Views = {};
+							bbg.Collections = {};
+
+							//We can then create objects under bbg as follows
+							bbg.Models.Person = Backbone.Model.extend({});
+							bbg.Collections.People = Backbone.Collection.extend({
+								model:bbg.Models.Person
+							});
+							bbg.Views.Person = Backbone.View.extend({
+								tagName:'li'
+								render:function(){}
+							})
+						})();
+						```
+						<!-- .element: class="fragment" -->
+						</script>
+					</section>
+				</section>
+				<section>
+					<section data-markdown>
+						<script type="text/template">
+						#DOM EVENTS
+						</script>
+					</section>
+					<section data-markdown>
+						<script type="text/template">
+						## Handling events on BACKBONE views
+						```
+						(function(){
+							window.bbg = {};
+							bbg.Models = {};
+							bbg.Views = {};
+							bbg.Collections = {};
+
+							//We can then create objects under bbg as follows
+							bbg.Models.Person = Backbone.Model.extend({});
+							bbg.Collections.People = Backbone.Collection.extend({
+								model:bbg.Models.Person
+							});
+							bbg.Views.Person = Backbone.View.extend({
+								tagName:'li',
+								events:{
+									'click .edit':function(e){
+										alert( this.model.get('name') + ' edit clicked !!!');
+									}
+								},
+								template: _.template('<%= name %> is aged <%= age %> years <button class="edit">EDIT</button> <button class="delete">DELETE</button>'),
+								render:function(){
+									this.$el.on('click','.delete',_.bind(function(e){
+										alert( this.model.get('name') + ' delete clicked !!!');
+									},this));
+									this.$el.append(this.template(this.model.toJSON()));
+									return this;
+								}
+							});
+							bbg.Views.People = Backbone.View.extend({
+								tagName:'ul',
+								render:function(){
+									this.collection.each(function(person){
+										var personView = new bbg.Views.Person({model:person});
+										this.$el.append(personView.render().el);
+									},this);
+
+									return this;
+								}
+							});
+
+						})();
+
+						var peopleData = [{name:'John',age:23},{name:'Doe',age:60}];
+
+						var people = new bbg.Collections.People(peopleData);
+						var peopleView = new bbg.Views.People({collection:people});
+						$(document.body).append(peopleView.render().el);
+						```
+						</script>
+					</section>
+					<section data-markdown>
+						<script type="text/template">
+						### Capture changes to the model, Re-render Views, Removing Model data
+						```
+						(function(){
+							window.bbg = {};
+							bbg.Models = {};
+							bbg.Views = {};
+							bbg.Collections = {};
+
+							//We can then create objects under bbg as follows
+							bbg.Models.Person = Backbone.Model.extend({
+								initialize:function(){
+									this.on('change',function(model){
+										console.log('Model updated');
+									});
+								}
+							});
+							bbg.Collections.People = Backbone.Collection.extend({
+								model:bbg.Models.Person
+							});
+							bbg.Views.Person = Backbone.View.extend({
+								tagName:'li',
+								events:{
+									'click .edit':function(e){
+										var newAge = prompt('Edit ' + this.model.get('name') + '\'s' + ' age',this.model.get('age'));
+										this.model.set('age',newAge);
+									}
+								},
+								template: _.template('<%= name %> is aged <%= age %> years <button class="edit">EDIT</button> <button class="delete">DELETE</button>'),
+								render:function(){
+									this.$el.on('click','.delete',_.bind(this.deleteOne,this));
+									this.$el.append(this.template(this.model.toJSON()));
+									return this;
+								},
+								deleteOne:function(){
+									Backbone.Events.trigger('model:delete',[this.model]);
+								}
+							});
+							bbg.Views.People = Backbone.View.extend({
+								tagName:'ul',
+								initialize:function(){
+									this.collection.on('change', _.bind(this.render, this));
+									Backbone.Events.on('model:delete',_.bind(function(model){
+										this.collection.remove(model);
+										this.render();
+									},this));
+								},
+								render:function(){
+									this.$el.empty();
+									this.collection.each(function(person){
+										var personView = new bbg.Views.Person({model:person});
+										this.$el.append(personView.render().el);
+									},this);
+
+									return this;
+								}
+							});
+
+						})();
+
+						var peopleData = [{name:'John',age:23},{name:'Doe',age:60}];
+
+						var people = new bbg.Collections.People(peopleData);
+						var peopleView = new bbg.Views.People({collection:people});
+						$(document.body).append(peopleView.render().el);
+						```
+						</script>
+					</section>
+					<section data-markdown>
+						<script type="text/template">
+						### Creating and updating model data
+						```
+						(function(){
+							window.bbg = {};
+							bbg.Models = {};
+							bbg.Views = {};
+							bbg.Collections = {};
+
+							//We can then create objects under bbg as follows
+							bbg.Models.Person = Backbone.Model.extend({
+								initialize:function(){
+									this.on('change',function(model){
+										console.log('Model updated');
+									});
+								}
+							});
+							bbg.Collections.People = Backbone.Collection.extend({
+								model:bbg.Models.Person
+							});
+							bbg.Views.Person = Backbone.View.extend({
+								tagName:'li',
+								events:{
+									'click .edit':function(e){
+										var newAge = prompt('Edit ' + this.model.get('name') + '\'s' + ' age',this.model.get('age'));
+										this.model.set('age',newAge);
+									}
+								},
+								template: _.template('<%= name %> is aged <%= age %> years <button class="edit">EDIT</button> <button class="delete">DELETE</button>'),
+								render:function(){
+									this.$el.on('click','.delete',_.bind(this.deleteOne,this));
+									this.$el.append(this.template(this.model.toJSON()));
+									return this;
+								},
+								deleteOne:function(){
+									Backbone.Events.trigger('model:delete',[this.model]);
+								}
+							});
+							bbg.Views.People = Backbone.View.extend({
+								tagName:'ul',
+								events:{
+									'click .add':'addOne'
+								},
+								initialize:function(){
+									this.collection.on('change', _.bind(this.render, this));
+									this.collection.on('add',_.bind(this.render, this));
+									Backbone.Events.on('model:delete',_.bind(function(model){
+										this.collection.remove(model);
+										this.render();
+									},this));
+								},
+								render:function(){
+									this.$el.empty();
+									this.collection.each(function(person){
+										var personView = new bbg.Views.Person({model:person});
+										this.$el.append(personView.render().el);
+									},this);
+									this.$el.append('<button class="add">ADD</button>')
+
+									return this;
+								},
+								addOne:function(){
+									var name = prompt('Enter name');
+									var age = prompt('Enter age');
+									if(name && age){
+										this.collection.add({name:name,age:age});
+									}
+								}
+							});
+
+						})();
+
+						var peopleData = [{name:'John',age:23},{name:'Doe',age:60}];
+
+						var people = new bbg.Collections.People(peopleData);
+						var peopleView = new bbg.Views.People({collection:people});
+						$(document.body).append(peopleView.render().el);
+						```
+						</script>
+					</section>
+				</section>
+				<section>
+					<section data-markdown>
+						<script type="text/template">
+						#Routers
+						</script>
+					</section>
+					<section data-markdown>
+						<script type="text/template">
+						##Basics of routing
+						In Backbone, routers provide a way for you to connect URLs (either hash fragments, or real) to parts of your application. Any piece of your application that you want to be bookmarkable, shareable, and back-button-able, needs a URL.<!-- .element: class="text-left" -->
+
+
+						eg.<!-- .element: class="text-left" -->
+						```
+						http://example.com/#about
+						http://example.com/#search/seasonal-horns/page2
+						```
+						An application will usually have at least one route mapping a URL route to a function that determines what happens when a user reaches that route. This relationship is defined as follows:<!-- .element: class="text-left" -->
+						```
+						'route' : 'mappedFunction'
+						```
+
+						</script>
+					</section>
+					<section data-markdown>
+						<script type="text/template">
+						##Router Definition
+						```
+						var PeopleRouter = Backbone.Router.extend({
+						    /* define the route and function maps for this router */
+						    routes: {
+						        "about" : "showAbout",
+						        /* Sample usage: http://example.com/#about */
+
+						        "people/:id" : "getPerson",
+						        /* This is an example of using a ":param" variable which allows us to match
+						        any of the components between two URL slashes */
+						        /* Sample usage: http://example.com/#people/5 */
+
+						        "search/:name" : "searchPeople",
+						        /* We can also define multiple routes that are bound to the same map function,
+						        in this case searchPeople(). Note below how we are optionally passing in a
+						        reference to a age number if one is supplied */
+						        /* Sample usage: http://example.com/#search/nisheed */
+
+						        "search/:name/:age" : "searchPeople",
+						        /* As we can see, URLs may contain as many ":param"s as we wish */
+						        /* Sample usage: http://example.com/#search/nisheed/27 */
+
+						        "people/:id/download/*documentPath" : "downloadDocument",
+						        /* This is an example of using a *splat. Splats are able to match any number of
+						        URL components and can be combined with ":param"s*/
+						        /* Sample usage: http://example.com/#people/5/download/files/Resume.doc */
+
+						        /* If you wish to use splats for anything beyond default routing, it is probably a good
+						        idea to leave them at the end of a URL otherwise you may need to apply regular
+						        expression parsing on your fragment */
+
+						        "*other"    : "defaultRoute",
+						        /* This is a default route that also uses a *splat. Consider the
+						        default route a wildcard for URLs that are either not matched or where
+						        the user has incorrectly typed in a route path manually */
+						        /* Sample usage: http://example.com/# <anything> */
+
+						        "optional(/:item)": "optionalItem",
+						        "named/optional/(y:z)": "namedOptionalItem"
+						        /* Router URLs also support optional parts via parentheses, without having
+						           to use a regex.  */
+						    },
+
+						    showAbout: function(){
+						    },
+
+						    getPerson: function(id){
+						        /*
+						        Note that the id matched in the above route will be passed to this function
+						        */
+						        console.log("You are trying to reach person " + id);
+						    },
+
+						    searchPeople: function(name, age){
+						        var age = age || 1;
+						        console.log(name + ' with the age ' + age + ' passed');
+						    },
+
+						    downloadDocument: function(id, path){
+						    	console.log(id,path);
+						    },
+
+						    defaultRoute: function(other){
+						        console.log('Invalid. You attempted to reach:' + other);
+						    }
+						});
+
+						/* Now that we have a router setup, we need to instantiate it */
+
+						var myPeopleRouter = new PeopleRouter();
+						```
+						</script>
+					</section>
+					<section data-markdown>
+						<script type="text/template">
+						###Backbone.history
+						Next, we need to initialize Backbone.history as it handles hashchange events in our application. This will automatically handle routes that have been defined and trigger callbacks when they’ve been accessed.
+
+						The `Backbone.history.start()` method will simply tell Backbone that it’s okay to begin monitoring all hashchange
+						</script>
+					</section>
+					<section  data-markdown>
+						<script type="text/template">
+						If you would like to update the URL to reflect the application state at a particular point, you can use the router’s `.navigate()` method.
+
+						It is also possible for `Router.navigate()` to trigger the route along with updating the URL fragment by passing the `trigger:true` option 
+						</script>
+					</section>
+				</section>
+				<section data-markdown>
+					<script type="text/template">
+						#REST AND BACKBONE
+						GET POST PUT AND DELETE
+					</script>
+				</section>
+				<section>
+					<section data-markdown>
+						<script type="text/template">
+							#AMD REQUIREJS AND BACKBONE
+						</script>
+					</section>
+					<section data-markdown>
+						<script type="text/template">
+							#NEED
+							Browsers are limited in how many parallel requests they can make, so often it’s slow to load multiple files, as it can only do a certain number at a time. This number depends on the user’s settings and browser, but is usually around 4-8. When working on Backbone applications it’s good to split your app into multiple JS files, so it’s easy to hit that limit quickly. This can be negated by minifying your code into one file as part of a build process, but does not help with the next point.
+							<!-- .element: class="text-small" -->
+
+							Scripts are loaded synchronously. This means that the browser cannot continue page rendering while the script is loading, .
+							<!-- .element: class="text-small" -->
+						</script>
+					</section>
+					<section data-markdown>
+						<script type="text/template">
+						Loading the scripts asynchronously means the load process is non-blocking. The browser can continue to render the rest of the page as the scripts are being loaded, speeding up the initial load time.
+
+						We can load modules in more intelligently, having more control over when they are loaded and ensuring that modules which have dependencies are loaded in the right order.
+						</script>
+					</section>
+					<section data-markdown>
+						<script type="text/template">
+						##Basic Module Definition
+						```
+						// A module ID has been omitted here to make the module anonymous
+						define(['foo', 'bar'],
+						    // module definition function
+						    // dependencies (foo and bar) are mapped to function parameters
+						    function ( foo, bar ) {
+						        // return a value that defines the module export
+						        // (i.e the functionality we want to expose for consumption)
+
+						        // create your module here
+						        var myModule = {
+						            doStuff:function(){
+						                console.log('Yay! Stuff');
+						            }
+						        }
+
+						        return myModule;
+						});
+						```
+						</script>
+					</section>
+					<section data-markdown>
+						<script type="text/template">
+						##Require JS Set up
+						Include the require.js library in the html using script tag.
+
+						pass the `data-main` attribute in the `script` tag as the main app file to be loaded.
+						
+						In the main JS file that you load you can then configure require JS as follows
+						```
+						require.config({
+						    // your configuration key/values here
+						    baseUrl: "app", // generally the same directory as the script used in a data-main attribute for the top level script
+						    paths: {}, // set up custom paths to libraries, or paths to RequireJS plugins
+						    shim: {}, // used for setting up all Shims (see below for more detail)
+						});
+						```
+						</script>
+					</section>
+					<section data-markdown>
+						<script type="text/template">
+						##Handling non - AMD modules
+						```
+							require.config({
+							    shim: {
+							        'lib/underscore': {
+							          exports: '_'
+							        },
+							        'lib/backbone': {
+							            deps: ['lib/underscore', 'jquery'],
+							            exports: 'Backbone'
+							        }
+							    }
+							});
+						```
+						```
+						require( 'lib/backbone', function( Backbone ) {...} );
+						```
+						</script>
+					</section>
+				</section>
+						
+					<section data-markdown>
+						<script type="text/template">
+						</script>
+					</section>
+			</div>
+		
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.min.js"></script>
+
+		<script>
+
+			// Full list of configuration options available here:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				history: true,
+				center: true,
+
+				theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+				transition: Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/zoom/linear/fade/none
+
+				// Parallax scrolling
+				// parallaxBackgroundImage: 'https://s3.amazonaws.com/hakim-static/reveal-js/reveal-parallax-1.jpg',
+				// parallaxBackgroundSize: '2100px 900px',
+
+				// Optional libraries used to extend on reveal.js
+				dependencies: [
+					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: 'plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+					{ src: 'plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+				]
+			});
+
+		</script>
+
+	</body>
+</html>
